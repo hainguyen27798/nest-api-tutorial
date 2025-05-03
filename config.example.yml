@@ -1,0 +1,10 @@
+server:
+  port: 8080
+  enableLogging: false
+mongo:
+  dbName: nest-api-tutorial
+  username: nestApiTutorialUser
+  password: nestApiTutorial@123
+  host: mongo
+  port: 27017
+  directConnection: false
