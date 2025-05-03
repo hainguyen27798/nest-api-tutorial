@@ -21,6 +21,8 @@ export class Configuration {
       ) as TConfig;
     }
 
+    Configuration._config.server.env = envMode;
+
     return Configuration._config;
   }
 
