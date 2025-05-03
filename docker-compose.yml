@@ -1,0 +1,37 @@
+name: nest-api-tutorial
+networks:
+  nest_api_tutorial_network:
+    driver: bridge
+services:
+  mongo:
+    build:
+      dockerfile: .docker/mongo/Dockerfile
+    container_name: nest-api-tutorial-db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
+    ports:
+      - '27018:27017'
+    command: --replSet rs0 --keyFile /etc/mongo-keyfile --bind_ip_all
+    healthcheck:
+      test: echo "
+        try { rs.status() }
+        catch (err) {
+          rs.initiate({
+            _id:'rs0',
+            members:[
+              { _id:0, host:'mongo:27017' }
+            ]
+          })
+        }" | mongosh --port 27017 -u $MONGO_USERNAME -p $MONGO_PASSWORD --authenticationDatabase admin
+      interval: 60s
+      timeout: 15s
+      start_period: 15s
+      retries: 10
+    networks:
+      - nest_api_tutorial_network
+    volumes:
+      - nest_api_tutorial_db:/data/db
+volumes:
+  nest_api_tutorial_db:
