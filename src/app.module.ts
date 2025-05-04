@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { Configuration } from '@/configs';
+import { DatabaseModule } from '@/database';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { UserModule } from '@/modules/user/user.module';
 
 @Module({
   imports: [
@@ -9,6 +12,20 @@ import { Configuration } from '@/configs';
       isGlobal: true,
       load: [Configuration.init],
     }),
+    DatabaseModule.registerSync({
+      useFactory: async () => {
+        const mongoConfig = Configuration.instance.mongo;
+        const password = encodeURIComponent(mongoConfig.password);
+        const uri = `mongodb://${mongoConfig.username}:${password}@${mongoConfig.host}:${mongoConfig.port}/?directConnection=${mongoConfig.directConnection}`;
+        return {
+          uri,
+          dbName: mongoConfig.dbName,
+        };
+      },
+      inject: [ConfigService],
+    }),
+    UserModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

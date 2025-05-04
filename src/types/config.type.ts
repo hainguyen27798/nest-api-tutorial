@@ -9,7 +9,7 @@ export type TMongo = {
   host: string;
   username: string;
   password: string;
-  databaseName: string;
+  dbName: string;
   authSource: string;
   directConnection?: boolean;
 };
