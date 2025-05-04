@@ -92,7 +92,10 @@ export class LoggerHelper {
   static get config(): LoggerService {
     return {
       ...LoggerHelper.logger,
-      log: (message: unknown) => LoggerHelper.logger.info(message),
+      log: (message: any, ...optionalParams: any[]) => {
+        const splat = optionalParams?.[0] || 'App';
+        LoggerHelper.logger.info(`[${splat}] ${message}`);
+      },
       error: (message: unknown) => LoggerHelper.logger.error(message),
     };
   }
