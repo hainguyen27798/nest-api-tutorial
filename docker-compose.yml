@@ -6,7 +6,7 @@ services:
   mongo:
     build:
       dockerfile: .docker/mongo/Dockerfile
-    container_name: nest-api-tutorial-db
+    container_name: db
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
@@ -33,5 +33,55 @@ services:
       - nest_api_tutorial_network
     volumes:
       - nest_api_tutorial_db:/data/db
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - nest_api_tutorial_network
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./logs:/var/log
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - nest_api_tutorial_network
+
+  grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy 
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - nest_api_tutorial_network
 volumes:
   nest_api_tutorial_db:
