@@ -5,6 +5,7 @@ import { Configuration } from '@/configs';
 import { DatabaseModule } from '@/database';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
+import { AppLoggerModule } from '@/pkg/app-logger';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UserModule } from '@/modules/user/user.module';
       },
       inject: [ConfigService],
     }),
+    AppLoggerModule,
     UserModule,
     AuthModule,
   ],
