@@ -60,18 +60,14 @@ const consoleFormat = format.combine(
     colors,
     levels,
   }),
-  format.timestamp({
-    format: 'YYYY-MM-DD HH:mm:ss',
-  }),
+  format.timestamp(),
   format.simple(),
   someColoredFormat,
 );
 
 const fileFormat = format.combine(
   format.errors({ stack: true }),
-  format.timestamp({
-    format: 'YYYY-MM-DD HH:mm:ss',
-  }),
+  format.timestamp(),
   format.json(),
   format.printf((payload) => {
     const splat = payload[SPLAT];

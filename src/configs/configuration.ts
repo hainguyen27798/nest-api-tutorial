@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { join } from 'path';
@@ -16,12 +17,16 @@ export class Configuration {
     }
 
     if (!Configuration._config) {
-      Configuration._config = yaml.load(
-        readFileSync(join(__dirname, `../../config.${envMode}.yml`), 'utf8'),
-      ) as TConfig;
+      try {
+        Configuration._config = yaml.load(
+          readFileSync(join(__dirname, `../../config.${envMode}.yml`), 'utf8'),
+        ) as TConfig;
+        Configuration._config.server.env = envMode;
+      } catch (error) {
+        Logger.error(`config.${envMode}.yml not found`, error.stack, 'Configuration.init');
+        throw error;
+      }
     }
-
-    Configuration._config.server.env = envMode;
 
     return Configuration._config;
   }

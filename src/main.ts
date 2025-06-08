@@ -6,7 +6,9 @@ import { Configuration } from '@/configs';
 import { AppLoggerService } from '@/pkg/app-logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
 
   app.enableCors({
     origin: true,
