@@ -1,6 +1,6 @@
 {
   "name": "nest-api-tutorial",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "author": "",
   "private": true,
@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "build:prod": "sh ./build-prod.sh",
     "start": "nest start",
     "start:dev": "NODE_ENV=local nest start --watch",
     "start:debug": "nest start --debug --watch",

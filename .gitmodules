@@ -1,0 +1,4 @@
+[submodule "release"]
+	path = release
+	url = https://github.com/hainguyen27798/nest-api-tutorial.git
+	branch = build
