@@ -6,6 +6,7 @@ import { DatabaseModule } from '@/database';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 import { AppLoggerModule } from '@/pkg/app-logger';
+import { TMongo } from '@/types';
 
 @Module({
   imports: [
@@ -13,9 +14,9 @@ import { AppLoggerModule } from '@/pkg/app-logger';
       isGlobal: true,
       load: [Configuration.init],
     }),
-    DatabaseModule.registerSync({
-      useFactory: async () => {
-        const mongoConfig = Configuration.instance.mongo;
+    DatabaseModule.forRootSync({
+      useFactory: async (config) => {
+        const mongoConfig: TMongo = config.get('mongo');
         const password = encodeURIComponent(mongoConfig.password);
         const uri = `mongodb://${mongoConfig.username}:${password}@${mongoConfig.host}:${mongoConfig.port}/?directConnection=${mongoConfig.directConnection}`;
         return {

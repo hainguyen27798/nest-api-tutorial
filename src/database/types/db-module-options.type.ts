@@ -6,4 +6,5 @@ export type TDbModuleOptions = {
 export type TDbModuleSyncOptions = {
   useFactory: (...args: any[]) => Promise<TDbModuleOptions> | TDbModuleOptions;
   inject?: any[];
+  import?: any[];
 };

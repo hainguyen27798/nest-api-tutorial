@@ -1,14 +1,12 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { DatabaseService } from '@/database/database.service';
-import { DB_OPTIONS } from '@/database/tokens';
 import { TDbModuleSyncOptions } from '@/database/types';
 
-@Global()
 @Module({})
 export class DatabaseModule {
-  static registerSync(syncOptions: TDbModuleSyncOptions): DynamicModule {
+  static forRootSync(syncOptions: TDbModuleSyncOptions): DynamicModule {
     return {
       module: DatabaseModule,
       imports: [
@@ -21,17 +19,12 @@ export class DatabaseModule {
               maxPoolSize: 100,
             };
           },
-          inject: [...(syncOptions.inject || []), DB_OPTIONS],
+          imports: syncOptions.import || [],
+          inject: [...(syncOptions.inject || [])],
         }),
       ],
-      providers: [
-        {
-          provide: DB_OPTIONS,
-          useValue: syncOptions,
-        },
-        DatabaseService,
-      ],
-      exports: [DatabaseService, DB_OPTIONS],
+      providers: [DatabaseService],
+      exports: [DatabaseModule],
     };
   }
 }
